@@ -1,6 +1,6 @@
 variable "namespace" {
   type    = string
-  default = "three-tier-app"
+  default = "theboss"
 }
 
 variable "postgres_user" {
@@ -15,5 +15,17 @@ variable "postgres_password" {
 
 variable "postgres_db" {
   type      = string
+  sensitive = true
+}
+
+variable "backend" {
+  type = string
+  default = "backend:latest"
+  sensitive = true
+}
+
+variable "frontend" {
+  type = string
+  default = "frontend:latest"
   sensitive = true
 }

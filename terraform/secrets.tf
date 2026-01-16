@@ -5,9 +5,9 @@ resource "kubernetes_secret" "postgres" {
   }
 
   data = {
-    POSTGRES_USER     = base64encode(var.postgres_user)
-    POSTGRES_PASSWORD = base64encode(var.postgres_password)
-    POSTGRES_DB       = base64encode(var.postgres_db)
+    POSTGRES_USER     = var.postgres_user
+    POSTGRES_PASSWORD = var.postgres_password
+    POSTGRES_DB       = var.postgres_db
   }
 
   type = "Opaque"
@@ -21,8 +21,17 @@ resource "kubernetes_secret" "app" {
   }
 
   data = {
-    DATABASE_URL = base64encode("postgresql://...")
-    SECRET_KEY  = base64encode("supersecret")
+    SECRET_KEY = "UMA_CHAVE_MUITO_SEGURA"
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = "120"
+
+    DATABASE_DRIVER   = "postgresql"
+    DATABASE_USERNAME = var.postgres_user
+    DATABASE_PASSWORD = var.postgres_password
+    DATABASE_HOST     = "postgres"
+    DATABASE_PORT     = "5432"
+    DATABASE_NAME     = var.postgres_db
   }
+
 }
 
