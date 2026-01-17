@@ -5,11 +5,6 @@ include .env.postgres
 
 .PHONY: start addons init validate plan apply-plan run test delete all
 
-
-terraform: 
-	sudo apt update && sudo apt install terraform
-
-
 start:
 	clear	
 	@echo "🚀 Starting Minikube..."
@@ -65,10 +60,10 @@ db-setup:
 	kubectl exec $$BACKEND_POD -n $(NAMESPACE) -- poetry run python backend/src/seed.py; \
 	echo "✅ Database migrated, admin created, seed populated!"
 
-
 run: delete start addons init img validate plan apply-plan db-setup port-forward
-	@echo "✅ Infrastructure deployed!"
-
+	@echo "✅ SYSTEM ONLINE"
+	@echo "URL: http://localhost:8080"
+	@echo "Admin Credentials - Email: admin@cstrader.com | Password: SuperSecureAdmin123!"
 
 test:
 	@echo "\n=== POD STATUS ==="
