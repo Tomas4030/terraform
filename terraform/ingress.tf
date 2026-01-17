@@ -1,7 +1,8 @@
-resource "kubernetes_ingress" "frontend" {
+resource "kubernetes_ingress_v1" "app" {
   metadata {
     name      = "frontend-ingress"
     namespace = var.namespace
+
     annotations = {
       "nginx.ingress.kubernetes.io/rewrite-target" = "/"
     }
@@ -15,12 +16,12 @@ resource "kubernetes_ingress" "frontend" {
 
       http {
         path {
-          path     = "/"
+          path      = "/"
           path_type = "Prefix"
 
           backend {
             service {
-              name = kubernetes_service.frontend.metadata[0].name
+              name = "frontend"
               port {
                 number = 80
               }
