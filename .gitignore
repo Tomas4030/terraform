@@ -1,0 +1,42 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+# Kubernetes / Helm / Minikube
+*.kubeconfig
+*.log
+*.pid
+
+# Docker
+*.tar
+docker-compose.override.yml
+**/Dockerfile.old
+
+# Python / Backend
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.env
+.poetry/
+
+# VSCode / IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Scripts
+*.sh~
