@@ -1,9 +1,12 @@
 NAMESPACE=theboss
-
+PORT_FORWARD_PID_FILE=.port-forward.pid
 include .env.postgres
 export
 
 .PHONY: start addons init validate plan apply-plan run test delete all
+
+terraform: 
+	sudo apt update && sudo apt install terraform
 
 start:
 	clear	
@@ -41,7 +44,33 @@ apply-plan:
 	terraform apply k8s.plan
 
 
-run: delete start addons init img validate plan apply-plan
+port-forward:
+	@echo "🌐 Starting port-forward to frontend..."
+	@kubectl port-forward svc/frontend 8080:80 -n $(NAMESPACE) >/dev/null 2>&1 & \
+	echo $$! > $(PORT_FORWARD_PID_FILE)
+	@echo "✅ Frontend available at http://localhost:8080"
+
+db-setup:
+	@echo "🚀 Running database migrations..."
+	@BACKEND_POD=$$(kubectl get pod -l app=backend -n $(NAMESPACE) -o jsonpath="{.items[0].metadata.name}") && \
+	kubectl exec $$BACKEND_POD -n $(NAMESPACE) -- \
+	poetry run alembic -c ./backend/alembic.ini upgrade head
+	@echo "✅ Database updated!"
+
+	@echo "👤 Creating admin user..."
+	@BACKEND_POD=$$(kubectl get pod -l app=backend -n $(NAMESPACE) -o jsonpath="{.items[0].metadata.name}") && \
+	kubectl exec $$BACKEND_POD -n $(NAMESPACE) -- \
+	poetry run python backend/src/initialize_admin.py
+	@echo "✅ Admin user created!"
+
+	@echo "🌱 Seeding database..."
+	@BACKEND_POD=$$(kubectl get pod -l app=backend -n $(NAMESPACE) -o jsonpath='{.items[0].metadata.name}') && \
+	kubectl exec $$BACKEND_POD -n $(NAMESPACE) -- \
+	poetry run python backend/src/seed.py
+	@echo "✅ Database populated!"
+
+
+run: delete start addons init img validate plan apply-plan db-setup port-forward
 	@echo "✅ Infrastructure deployed!"
 
 test:

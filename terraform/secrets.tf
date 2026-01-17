@@ -31,6 +31,10 @@ resource "kubernetes_secret" "app" {
     DATABASE_HOST     = "postgres"
     DATABASE_PORT     = "5432"
     DATABASE_NAME     = var.postgres_db
+
+    ADMIN_EMAIL     = "admin@cstrader.com"
+    ADMIN_PASSWORD  = "SuperSecureAdmin123!"
+    ADMIN_NAME      = "System Admin"
   }
 
 }
